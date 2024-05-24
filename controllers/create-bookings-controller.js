@@ -27,6 +27,7 @@ async function allRooms(from_date, to_date, property) {
       },
     });
 
+    console.log("here is your .ENV", process.env.EZEE_BASE_URL);
     let config = {
       method: "post",
       maxBodyLength: Infinity,
@@ -43,7 +44,7 @@ async function allRooms(from_date, to_date, property) {
     console.log(responseData);
     return responseData;
   } catch (error) {
-    console.log(error);
+    // console.log(error);
   }
 }
 
