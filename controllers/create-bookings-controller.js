@@ -7,11 +7,12 @@ async function createABooking() {
   }
 }
 
-async function allRooms(checkIn, checkOut, property) {
+async function allRooms(from_date, to_date, property) {
   try {
     let propertyDict = {
       "Dal Lake": 46138,
     };
+    console.log(propertyDict);
     let data = JSON.stringify({
       RES_Request: {
         Request_Type: "RoomAvailability",
@@ -20,8 +21,8 @@ async function allRooms(checkIn, checkOut, property) {
           AuthCode: process.env.EZEE_AUTH_CODE,
         },
         RoomData: {
-          from_date: "2024-05-26",
-          to_date: "2024-05-27",
+          from_date,
+          to_date,
         },
       },
     });
@@ -33,19 +34,17 @@ async function allRooms(checkIn, checkOut, property) {
       headers: {
         "Content-Type": "application/json",
       },
-      data: data,
+      data,
     };
 
-    // axios
-    //   .request(config)
-    //   .then((response) => {
-    //     console.log(JSON.stringify(response.data));
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   });
-    const apiData = await axios(config);
-  } catch (error) {}
+    const response = await axios(config);
+
+    const responseData = JSON.stringify(response.data);
+    console.log(responseData);
+    return responseData;
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 module.exports = { createABooking, allRooms };
