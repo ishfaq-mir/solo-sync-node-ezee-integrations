@@ -2,7 +2,7 @@ const razorPay = require("razorpay");
 async function order(items) {
   let { amount, currency } = items;
 
-  amount *= 100; //converting rupess into
+  amount *= 100; //converting rupess into paisa's
 
   const instance = new razorPay({
     key_id: process.env.RAZOR_PAY_KEY_ID,
