@@ -8,6 +8,7 @@ const logger = require("morgan");
 const indexRouter = require("./routes/index");
 const roomsRouter = require("./routes/rooms");
 const paymentsRouter = require("./routes/payments-route");
+const bookingRouter = require("./routes/bookings-route");
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/", indexRouter);
 app.use("/rooms", roomsRouter);
 app.use("/payments", paymentsRouter);
+app.use("/booking", bookingRouter);
 
 app.use(function (req, res, next) {
   console.log("ero");
