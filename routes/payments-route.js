@@ -13,7 +13,7 @@ router.post("/order", async function (req, res, next) {
 
   res.json({
     status: "success",
-    data: await order(body),
+    paymentId: await order(body),
   });
 });
 

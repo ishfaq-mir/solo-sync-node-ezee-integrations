@@ -9,12 +9,12 @@ async function order(items) {
     key_secret: process.env.RAZOR_PAY_SECRET,
   });
 
-  const order = instance.orders.create({
+  const order = await instance.orders.create({
     amount,
     currency,
   });
 
-  return order;
+  return order.id;
 }
 
 module.exports = { order };
