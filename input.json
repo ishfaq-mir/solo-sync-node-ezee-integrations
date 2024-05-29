@@ -1,0 +1,35 @@
+ {
+    "Room_Details": {
+        "Room_1": {
+            "Rateplan_Id": "4613800000000000001",
+            "Ratetype_Id": "4613800000000000001",
+            "Roomtype_Id": "4613800000000000001",
+            "baserate": "1500.0000",
+            "extradultrate": "0.0000",
+            "extrachildrate": "0.0000",
+            "number_adults": "1",
+            "number_children": "0",
+            "ExtraChild_Age": "18",
+            "Title": "This is booking",
+            "First_Name": "Ishfaq",
+            "Last_Name": "Hussain",
+            "Gender": "Male",
+            "SpecialRequest": ""
+        }
+    },
+    "check_in_date": "2023-04-22",
+    "check_out_date": "2023-04-23",
+    "Booking_Payment_Mode": "",
+    "Email_Address": "abc@gmail.com",
+    "Source_Id": "",
+    "MobileNo": "",
+    "Address": "",
+    "State": "",
+    "Country": "",
+    "City": "",
+    "Zipcode": "",
+    "Fax": "",
+    "Device": "",
+    "Languagekey": "",
+    "paymenttypeunkid": ""
+}
