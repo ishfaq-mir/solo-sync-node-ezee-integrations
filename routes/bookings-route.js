@@ -8,138 +8,137 @@ const router = express.Router();
 const axios = require("axios");
 const FormData = require("form-data");
 
-router.post("/legal", async function (req, res, next) {
-  console.log("here booking data", req.body);
-  const formData = new FormData();
-  formData.append(
-    "BookingData",
-    JSON.stringify({
-      Room_Details: {
-        Room_1: {
-          Rateplan_Id: "4613800000000000001", //Mandatory
-          Ratetype_Id: "4613800000000000001", //Mandatory
-          Roomtype_Id: "4613800000000000001", //Mandatory
-          baserate: "1500.0000", //Mandatory
-          extradultrate: "0.0000", //Mandatory
-          extrachildrate: "0.0000", //Mandatory
-          number_adults: "1", //Mandatory
-          number_children: "0", //Mandatory
-          ExtraChild_Age: "0", //Mandatory
-          Title: "This is booking",
-          First_Name: "Ishfaq", //Mandatory
-          Last_Name: "Hussain", //Mandatory
-          Gender: "Male",
-          SpecialRequest: "",
-        },
-        Room_2: {
-          Rateplan_Id: "4613800000000000002",
-          Ratetype_Id: "4613800000000000001",
-          Roomtype_Id: "4613800000000000002",
-          baserate: "5000.0000",
-          extradultrate: "0.0000",
-          extrachildrate: "0.0000",
-          number_adults: "1",
-          number_children: "0",
-          ExtraChild_Age: "18",
-          Title: "This is booking",
-          First_Name: "Ishfaq",
-          Last_Name: "Hussain",
-          Gender: "Male",
-          SpecialRequest: "",
-        },
-      },
-      check_in_date: "2024-05-30",
-      check_out_date: "2024-05-31",
-      Booking_Payment_Mode: "3",
-      Email_Address: "mirishfaqhussain007@gmail.com",
-      Source_Id: "",
-      MobileNo: "7006202746",
-      Address: "Hellowrd",
-      State: "Jammu and Kashmir",
-      Country: "India",
-      City: "srinagar",
-      Zipcode: "191113",
-      Fax: "",
-      Device: "",
-      Languagekey: "",
-      paymenttypeunkid: "",
-    })
-  );
-  formData.append("HotelCode", `${process.env.EZEE_HOTEL_CODE}`);
-  formData.append("APIKey", `${process.env.EZEE_AUTH_CODE}`);
-
-  console.log(formData);
-
-  axios
-    .post(
-      "https://live.ipms247.com/booking/reservation_api/listing.php?request_type=InsertBooking",
-      formData,
-      {
-        headers: {
-          ...formData.getHeaders(),
-          Cookie:
-            "AWSALB=mGou11NzT6f1gFsHvuLa2oQe3ui07ozrRl7kyGpbmeMSYdRs4OieSQJgd0SuVLQgtEPKnW0/Wt4BalrQeFeLZQ3j2ByFdLfZRs/AIkdFvw2nEctSrkaV5syCbTan; AWSALBCORS=mGou11NzT6f1gFsHvuLa2oQe3ui07ozrRl7kyGpbmeMSYdRs4OieSQJgd0SuVLQgtEPKnW0/Wt4BalrQeFeLZQ3j2ByFdLfZRs/AIkdFvw2nEctSrkaV5syCbTan; PHPSESSID=i7lrcuh8qv1eehpdb0ma3vhin5; SSID=9n677qs5qbju151a6l4jnehu67",
-        },
-      }
-    )
-    .then((response) => {
-      console.log(response.data);
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-
-  res.json({
-    status: "success",
-  });
-});
-
-// module.exports = router;
-
 router.post("/", async function (req, res, next) {
-  let roomDetailsObject = {};
-  req.body.rooms.forEach((room, index) => {
-    roomDetailsObject[`Room_${index + 1}`] = { ...room };
-  });
-  const { check_in_date, check_out_date, Booking_Payment_Mode, Email_Address } =
-    req.body;
+  const formData = new FormData();
+  let roomss = req.body.rooms;
 
-  console.log(
+  let m = {};
+  roomss.forEach((r, index) => {
+    m[`Room_${index + 1}`] = r;
+  });
+
+  const {
     check_in_date,
     check_out_date,
     Booking_Payment_Mode,
-    Email_Address
-  );
-
-  const formData = new FormData();
+    Email_Address,
+    MobileNo,
+    Address,
+    State,
+    Country,
+    City,
+    Zipcode,
+    Fax,
+    Device,
+    Languagekey,
+    paymenttypeunkid,
+  } = req.body;
   formData.append(
     "BookingData",
     JSON.stringify({
       Room_Details: {
-        ...roomDetailsObject,
+        ...m,
       },
       check_in_date,
       check_out_date,
       Booking_Payment_Mode,
       Email_Address,
-      Source_Id: "",
-      MobileNo: "7006202746",
-      Address: "Hellowrd",
-      State: "Jammu and Kashmir",
-      Country: "India",
-      City: "srinagar",
-      Zipcode: "191113",
-      Fax: "",
-      Device: "",
-      Languagekey: "",
-      paymenttypeunkid: "",
+      MobileNo,
+      Address,
+      State,
+      Country,
+      City,
+      Zipcode,
+      Fax,
+      Device,
+      Languagekey,
+      paymenttypeunkid,
     })
   );
   formData.append("HotelCode", `${process.env.EZEE_HOTEL_CODE}`);
   formData.append("APIKey", `${process.env.EZEE_AUTH_CODE}`);
 
-  axios
-    .post(
+  const response = await axios.post(
+    `${process.env.EZEE_BASE_URL}booking/reservation_api/listing.php?request_type=InsertBooking`,
+    formData,
+    {
+      headers: {
+        ...formData.getHeaders(),
+        Cookie: process.env.EZEE_COOKIE,
+      },
+    }
+  );
+
+  res.json({
+    status: "success",
+    data: response.data,
+  });
+});
+
+router.post("/", async function (req, res, next) {
+  try {
+    console.log("DEBUG");
+
+    const {
+      rooms,
+      check_in_date,
+      check_out_date,
+      Booking_Payment_Mode,
+      Email_Address,
+      Source_Id,
+      MobileNo,
+      Address,
+      State,
+      Country,
+      City,
+      Zipcode,
+      Fax,
+      paymenttypeunkid,
+    } = req.body;
+
+    // Ensure rooms array is provided and not empty
+    if (!rooms || rooms.length === 0) {
+      return res
+        .status(400)
+        .json({ status: "error", message: "Rooms data is required" });
+    }
+
+    // Constructing Room_Details dynamically
+    const Room_Details = {};
+    rooms.forEach((room, index) => {
+      Room_Details[`Room_${index + 1}`] = room;
+    });
+
+    const bookingData = {
+      Room_Details,
+      check_in_date,
+      check_out_date,
+      Booking_Payment_Mode,
+      Email_Address,
+      Source_Id,
+      MobileNo,
+      Address,
+      State,
+      Country,
+      City,
+      Zipcode,
+      Fax,
+      Device: "",
+      Languagekey: "",
+      paymenttypeunkid,
+    };
+
+    // Log the constructed booking data for debugging
+    `console.log("BookingData:", JSON.stringify(bookingData, null, 2));`;
+
+    const formData = new FormData();
+    formData.append("BookingData", JSON.stringify(bookingData));
+    formData.append("HotelCode", `${process.env.EZEE_HOTEL_CODE}`);
+    formData.append("APIKey", `${process.env.EZEE_AUTH_CODE}`);
+
+    console.log("FormData headers:", formData.getHeaders());
+
+    const response = await axios.post(
       "https://live.ipms247.com/booking/reservation_api/listing.php?request_type=InsertBooking",
       formData,
       {
@@ -149,17 +148,20 @@ router.post("/", async function (req, res, next) {
             "AWSALB=mGou11NzT6f1gFsHvuLa2oQe3ui07ozrRl7kyGpbmeMSYdRs4OieSQJgd0SuVLQgtEPKnW0/Wt4BalrQeFeLZQ3j2ByFdLfZRs/AIkdFvw2nEctSrkaV5syCbTan; AWSALBCORS=mGou11NzT6f1gFsHvuLa2oQe3ui07ozrRl7kyGpbmeMSYdRs4OieSQJgd0SuVLQgtEPKnW0/Wt4BalrQeFeLZQ3j2ByFdLfZRs/AIkdFvw2nEctSrkaV5syCbTan; PHPSESSID=i7lrcuh8qv1eehpdb0ma3vhin5; SSID=9n677qs5qbju151a6l4jnehu67",
         },
       }
-    )
-    .then((response) => {
-      console.log(response.data);
-    })
-    .catch((error) => {
-      console.error(error);
+    );
+
+    console.log(response.data);
+
+    res.json({
+      status: "success",
+      data: response.data,
     });
-
-  res.json({
-    status: "success",
-  });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: "error",
+      message: error.message,
+    });
+  }
 });
-
 module.exports = router;

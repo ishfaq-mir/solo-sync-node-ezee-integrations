@@ -4,47 +4,47 @@ const xml2js = require("xml2js");
 const util = require("util");
 const dayjs = require("dayjs");
 
-// async function roomRates(checkIn, checkOut, hotelCode) {
-//   try {
-//     let paramters = `<RES_Request>\n
-//    <Request_Type>Rate</Request_Type>\n
-//    <Authentication>\n
-//     <HotelCode>${hotelCode}</HotelCode>\n
-//     <AuthCode>${process.env.EZEE_AUTH_CODE}</AuthCode>\n
-//      </Authentication>\n
-//       <FromDate>${checkIn}</FromDate>\n
-//     <ToDate>${checkOut}</ToDate>\n
-//     </RES_Request>`;
+async function roomRates(checkIn, checkOut, hotelCode) {
+  try {
+    let paramters = `<RES_Request>\n
+   <Request_Type>Rate</Request_Type>\n
+   <Authentication>\n
+    <HotelCode>${hotelCode}</HotelCode>\n
+    <AuthCode>${process.env.EZEE_AUTH_CODE}</AuthCode>\n
+     </Authentication>\n
+      <FromDate>${checkIn}</FromDate>\n
+    <ToDate>${checkOut}</ToDate>\n
+    </RES_Request>`;
 
-//     let config = {
-//       method: "post",
-//       maxBodyLength: Infinity,
-//       url: `${process.env.EZEE_BASE_URL}pmsinterface/getdataAPI.php`,
-//       headers: {
-//         "Content-Type": "application/xml",
-//       },
-//       data: paramters,
-//     };
+    let config = {
+      method: "post",
+      maxBodyLength: Infinity,
+      url: `${process.env.EZEE_BASE_URL}pmsinterface/getdataAPI.php`,
+      headers: {
+        "Content-Type": "application/xml",
+      },
+      data: paramters,
+    };
 
-//     const response = await axios.request(config);
-//     const xmlData = response.data;
-//     const parser = new xml2js.Parser();
-//     const parseStringPromise = util.promisify(parser.parseString.bind(parser));
-//     const result = await parseStringPromise(xmlData);
-//     const json = JSON.stringify(result, null, 2);
+    const response = await axios.request(config);
+    const xmlData = response.data;
+    const parser = new xml2js.Parser();
+    const parseStringPromise = util.promisify(parser.parseString.bind(parser));
+    const result = await parseStringPromise(xmlData);
+    const json = JSON.stringify(result, null, 2);
 
-//     const rateType =
-//       JSON.parse(json)["RES_Response"]["RoomInfo"][0]["Source"][0][
-//         "RoomTypes"
-//       ][0]["RateType"];
+    const rateType =
+      JSON.parse(json)["RES_Response"]["RoomInfo"][0]["Source"][0][
+        "RoomTypes"
+      ][0]["RateType"];
 
-//     console.log(rateType);
+    console.log(rateType);
 
-//     return json;
-//   } catch (error) {
-//     console.log("Error while getting room rates", error);
-//   }
-// }
+    return json;
+  } catch (error) {
+    console.log("Error while getting room rates", error);
+  }
+}
 
 async function allRooms(from_date, to_date, property) {
   try {
@@ -128,4 +128,4 @@ function getNextDate(startDate) {
   currentDate = currentDate.add(5, "day");
   return currentDate.format("YYYY-MM-DD");
 }
-module.exports = { roomsInformation, roomInventory };
+module.exports = { roomsInformation, roomInventory, roomRates };
