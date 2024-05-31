@@ -8,18 +8,34 @@ const {
 } = require("../controllers/rooms-controller");
 
 router.get("/", async function (req, res, next) {
-  const { checkIn, checkOut, property } = req?.query;
-  const hostelsDict = {
-    "Dal Lake": 46138,
-  };
+  //valid api
+  try {
+    const { checkIn, checkOut, property } = req?.query;
+    const hostelsDict = {
+      "Dal Lake": 46138,
+    };
+    if (!checkIn) {
+      throw new Error("Invalid check_in");
+    }
+    if (!checkOut) {
+      throw new Error("Invalid check_out");
+    }
+    if (!hostelsDict[property] || !property) {
+      throw new Error("Invalid property");
+    }
 
-  res.json({
-    status: "success",
-    data: await roomsInformation(checkIn, checkOut, hostelsDict[property]),
-  });
+    res.json({
+      status: "success",
+      data: await roomsInformation(checkIn, checkOut, hostelsDict[property]),
+    });
+  } catch (error) {
+    const { message } = error.message;
+    res.status(500).json({ status: "error", message });
+  }
 });
 
 router.get("/rates", async function (req, res, next) {
+  //not using this api
   const { checkIn, checkOut, property } = req?.query;
 
   const hostelsDict = {
@@ -32,14 +48,32 @@ router.get("/rates", async function (req, res, next) {
 });
 
 router.get("/inventory", async function (req, res, next) {
-  const { property } = req?.query;
-  const hostelsDict = {
-    "Dal Lake": 46138,
-  };
+  try {
+    const { property, checkIn, checkOut } = req?.query;
 
-  const inventory = await roomInventory(hostelsDict[property]);
-  console.log("its inventory", inventory);
-  res.send(inventory);
-  // res.json({ message: "success", data: inventory });
+    const hostelsDict = {
+      "Dal Lake": 46138,
+    };
+
+    if (!checkIn) {
+      console.log("invalid checkIn")
+      throw new Error("Invalid check_in");
+    }
+    if (!checkOut) {
+      throw new Error("Invalid check_out");
+    }
+    if (!hostelsDict[property] || !property) {
+      throw new Error("Invalid property");
+    }
+
+    const inventory = await roomInventory(
+      hostelsDict[property],
+      checkIn,
+      checkOut
+    );
+    res.send(inventory);
+  } catch (error) {
+    res.status(500).json({ status: "error", message: error.message });
+  }
 });
 module.exports = router;

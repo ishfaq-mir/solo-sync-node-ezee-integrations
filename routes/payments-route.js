@@ -9,12 +9,15 @@ router.get("/", async function (req, res, next) {
 });
 
 router.post("/order", async function (req, res, next) {
-  const { body } = req;
-
-  res.json({
-    status: "success",
-    paymentId: await order(body),
-  });
+  try {
+    const { body } = req;
+    res.json({
+      status: "success",
+      paymentId: await order(body),
+    });
+  } catch (error) {
+    return res.status(500).json({ status: "error", message: error.message });
+  }
 });
 
 module.exports = router;

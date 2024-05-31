@@ -1,6 +1,12 @@
 const razorPay = require("razorpay");
 async function order(items) {
   let { amount, currency } = items;
+  if (!amount) {
+    throw new Error(`Invalid Amount`);
+  }
+  if (!currency) {
+    throw new Error("Invalid Currency");
+  }
 
   amount *= 100;
 

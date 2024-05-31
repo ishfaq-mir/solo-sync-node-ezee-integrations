@@ -84,12 +84,7 @@ async function allRooms(from_date, to_date, property) {
   }
 }
 
-async function roomInventory(propertyCode) {
-  const checkIn = dayjs().format("YYYY-MM-DD");
-  const checkOut = dayjs()
-    .add(process.env.EZEE_ROOM_INVENTORY_DAYS, "day")
-    .format("YYYY-MM-DD");
-  console.log(checkIn, checkOut);
+async function roomInventory(propertyCode, checkIn, checkOut) {
   let data = `<RES_Request>\n    <Request_Type>Inventory</Request_Type>\n    <Authentication>\n        <HotelCode>${propertyCode}</HotelCode>\n        <AuthCode>${process.env.EZEE_AUTH_CODE}</AuthCode>\n    </Authentication>\n    <FromDate>${checkIn}</FromDate>\n    <ToDate>${checkOut}</ToDate>\n</RES_Request>`;
 
   let config = {
