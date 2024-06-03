@@ -1,11 +1,13 @@
 const express = require("express");
 const router = express.Router();
 
-const {
-  roomInventory,
-  roomsInformation,
-  roomRates,
-} = require("../controllers/rooms-controller");
+// const {
+//   roomInventory,
+//   roomsInformation,
+//   roomRates,
+// } = require("../controllers/rooms-controller");
+
+const { Rooms } = require("../controllers/rooms-controller");
 
 router.get("/", async function (req, res, next) {
   //valid api
@@ -24,9 +26,14 @@ router.get("/", async function (req, res, next) {
       throw new Error("Invalid property");
     }
 
+    const roomInfo = new Rooms();
     res.json({
       status: "success",
-      data: await roomsInformation(checkIn, checkOut, hostelsDict[property]),
+      data: await roomInfo.roomsInformation(
+        checkIn,
+        checkOut,
+        hostelsDict[property]
+      ),
     });
   } catch (error) {
     const { message } = error.message;
@@ -56,7 +63,6 @@ router.get("/inventory", async function (req, res, next) {
     };
 
     if (!checkIn) {
-      console.log("invalid checkIn")
       throw new Error("Invalid check_in");
     }
     if (!checkOut) {
@@ -66,7 +72,11 @@ router.get("/inventory", async function (req, res, next) {
       throw new Error("Invalid property");
     }
 
-    const inventory = await roomInventory(
+    const roomInfo = new Rooms();
+
+    console.log(checkIn, checkOut, property);
+
+    const inventory = await roomInfo.roomInventory(
       hostelsDict[property],
       checkIn,
       checkOut
