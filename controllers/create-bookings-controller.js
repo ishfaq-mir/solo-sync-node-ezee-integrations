@@ -4,7 +4,7 @@ const FormData = require("form-data");
 class Booking {
   async createABooking(body) {
     try {
-      // this.enforceValidation(body);
+      this.enforceValidation(body);
 
       const formData = new FormData();
 
@@ -67,7 +67,7 @@ class Booking {
       );
       const { ReservationNo } = response.data;
       const processFlag = await this.markBookingProcessed(ReservationNo);
-      return processFlag;
+      return { ...processFlag, ReservationNo };
     } catch (error) {
       throw new Error(error);
     }

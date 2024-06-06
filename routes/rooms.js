@@ -74,8 +74,6 @@ router.get("/inventory", async function (req, res, next) {
 
     const roomInfo = new Rooms();
 
-    console.log(checkIn, checkOut, property);
-
     const inventory = await roomInfo.roomInventory(
       hostelsDict[property],
       checkIn,
