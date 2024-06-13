@@ -26,7 +26,6 @@ const validateABookingToken = async function (req, res, next) {
   try {
     const bearer = req.headers["authorization"];
 
-    console.log("here is your token", bearer);
 
     const splitter = bearer.split(" ");
     const incomingValue = jwt
@@ -34,14 +33,11 @@ const validateABookingToken = async function (req, res, next) {
       .split("_");
     const incominPayload = incomingValue[0];
 
-    console.log("incomingPayload", incominPayload);
-
     let localToken = await fs.readFile("auth.txt");
     const verifiedLocalPayload = jwt
       .verify(localToken.toString(), process.env.JWT_PRIVATE_KEY)
       .split("_")[0];
 
-    console.log("verifiedLocalPayload", verifiedLocalPayload);
 
     if (incominPayload !== verifiedLocalPayload) {
       throw new Error("Authentication Failed");
