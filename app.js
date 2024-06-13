@@ -22,10 +22,9 @@ const limiter = rateLimit({
   max: 100,
 });
 
-const validateABookingToken = async function (req, res, next) {
+const validateIncomingRequest = async function (req, res, next) {
   try {
     const bearer = req.headers["authorization"];
-
 
     const splitter = bearer.split(" ");
     const incomingValue = jwt
@@ -37,7 +36,6 @@ const validateABookingToken = async function (req, res, next) {
     const verifiedLocalPayload = jwt
       .verify(localToken.toString(), process.env.JWT_PRIVATE_KEY)
       .split("_")[0];
-
 
     if (incominPayload !== verifiedLocalPayload) {
       throw new Error("Authentication Failed");
@@ -62,8 +60,8 @@ app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/", indexRouter);
 app.use("/rooms", roomsRouter);
-app.use("/payments", paymentsRouter);
-app.use("/booking", validateABookingToken, bookingRouter);
+app.use("/payments", validateIncomingRequest, paymentsRouter);
+app.use("/booking", validateIncomingRequest, bookingRouter);
 app.use("/token", tokenRouter);
 
 app.use(function (req, res, next) {

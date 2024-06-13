@@ -15,8 +15,6 @@ const { Token } = require("../controllers/token-controller");
 //   });
 // });
 router.get("/", async function (req, res, next) {
- 
-
   const token = await new Token().mintToken();
 
   res.json({
