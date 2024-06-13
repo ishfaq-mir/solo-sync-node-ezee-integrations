@@ -11,6 +11,8 @@ const bookingRouter = require("./routes/bookings-route");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 const cors = require("cors");
+const tokenRouter = require("./routes/tokens-route");
+const jwt = require("jsonwebtoken");
 
 const app = express();
 
@@ -18,6 +20,25 @@ const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
 });
+
+const validateABookingToken = function (req, res, next) {
+  try {
+    const bearer = req.rawHeaders[3];
+    const splitter = bearer.split(" ");
+    const incomingValue = jwt
+      .verify(splitter[1], process.env.JWT_PRIVATE_KEY)
+      .split("_");
+    const incominPayload = incomingValue[0];
+
+    if (incominPayload !== process.env.JWT_PAYLOAD) {
+      throw new Error("Authentication Failed");
+    }
+
+    next();
+  } catch (error) {
+    res.status(401).json({ status: "error", message: error.message });
+  }
+};
 
 app.use(limiter);
 app.use(cors());
@@ -33,7 +54,8 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/", indexRouter);
 app.use("/rooms", roomsRouter);
 app.use("/payments", paymentsRouter);
-app.use("/booking", bookingRouter);
+app.use("/booking", validateABookingToken, bookingRouter);
+app.use("/token", tokenRouter);
 
 app.use(function (req, res, next) {
   next(createError(404));
