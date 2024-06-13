@@ -13,6 +13,7 @@ const rateLimit = require("express-rate-limit");
 const cors = require("cors");
 const tokenRouter = require("./routes/tokens-route");
 const jwt = require("jsonwebtoken");
+const fs = require("fs/promises");
 
 const app = express();
 
@@ -21,8 +22,9 @@ const limiter = rateLimit({
   max: 100,
 });
 
-const validateABookingToken = function (req, res, next) {
+const validateABookingToken = async function (req, res, next) {
   try {
+    console.log("here are your headers", req.rawHeaders);
     const bearer = req.rawHeaders[3];
     const splitter = bearer.split(" ");
     const incomingValue = jwt
@@ -30,7 +32,15 @@ const validateABookingToken = function (req, res, next) {
       .split("_");
     const incominPayload = incomingValue[0];
 
-    if (incominPayload !== process.env.JWT_PAYLOAD) {
+    console.log("incomingPayload", incominPayload);
+    let localToken = await fs.readFile("auth.txt");
+    const verifiedLocalPayload = jwt
+      .verify(localToken.toString(), process.env.JWT_PRIVATE_KEY)
+      .split("_")[0];
+
+    console.log("verifiedLocalPayload", verifiedLocalPayload);
+
+    if (incominPayload !== verifiedLocalPayload) {
       throw new Error("Authentication Failed");
     }
 
