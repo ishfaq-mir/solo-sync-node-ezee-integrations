@@ -24,8 +24,10 @@ const limiter = rateLimit({
 
 const validateABookingToken = async function (req, res, next) {
   try {
-    console.log("here are your headers", req.rawHeaders);
-    const bearer = req.rawHeaders[3];
+    const bearer = req.headers["authorization"];
+
+    console.log("here is your token", bearer);
+
     const splitter = bearer.split(" ");
     const incomingValue = jwt
       .verify(splitter[1], process.env.JWT_PRIVATE_KEY)
@@ -33,6 +35,7 @@ const validateABookingToken = async function (req, res, next) {
     const incominPayload = incomingValue[0];
 
     console.log("incomingPayload", incominPayload);
+
     let localToken = await fs.readFile("auth.txt");
     const verifiedLocalPayload = jwt
       .verify(localToken.toString(), process.env.JWT_PRIVATE_KEY)
