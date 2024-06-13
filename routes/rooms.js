@@ -14,7 +14,7 @@ router.get("/", async function (req, res, next) {
   try {
     const { checkIn, checkOut, property } = req?.query;
     const hostelsDict = {
-      "Dal Lake": 46138,
+      "Dal Lake": process.env.DAL_CODE,
     };
     if (!checkIn) {
       throw new Error("Invalid check_in");
@@ -46,7 +46,7 @@ router.get("/rates", async function (req, res, next) {
   const { checkIn, checkOut, property } = req?.query;
 
   const hostelsDict = {
-    "Dal Lake": 46138,
+    "Dal Lake": process.env.DAL_CODE,
   };
 
   const data = await roomRates(checkIn, checkOut, hostelsDict[property]);
@@ -59,7 +59,7 @@ router.get("/inventory", async function (req, res, next) {
     const { property, checkIn, checkOut } = req?.query;
 
     const hostelsDict = {
-      "Dal Lake": 46138,
+      "Dal Lake": process.env.DAL_CODE,
     };
 
     if (!checkIn) {
